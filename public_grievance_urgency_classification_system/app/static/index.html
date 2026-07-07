@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jan Samadhan — Public Grievance Urgency Classification Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/portal.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230b3a63'/><circle cx='50' cy='50' r='18' fill='none' stroke='white' stroke-width='5'/></svg>">
+</head>
+<body>
+
+<div class="gov-strip">
+  <div class="wrap">
+    <span><span class="tri"><i style="background:#f5921e"></i><i style="background:#fff"></i><i style="background:#2e9e5b"></i></span>
+      भारत सरकार &nbsp;|&nbsp; GOVERNMENT OF INDIA — Citizen Grievance Services (Academic Prototype)</span>
+    <span>Helpline 1800-XXX-XXXX &nbsp;·&nbsp; <a href="/admin" style="color:#9fc3e4">Officer Login</a></span>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="#0b3a63"/>
+      <circle cx="50" cy="50" r="30" fill="none" stroke="#fff" stroke-width="4"/>
+      <g stroke="#f5921e" stroke-width="3" stroke-linecap="round">
+        <line x1="50" y1="24" x2="50" y2="76"/><line x1="24" y1="50" x2="76" y2="50"/>
+        <line x1="32" y1="32" x2="68" y2="68"/><line x1="68" y1="32" x2="32" y2="68"/>
+      </g>
+      <circle cx="50" cy="50" r="7" fill="#fff"/>
+    </svg>
+    <div>
+      <h1 class="brand-title">Jan Samadhan <span class="hi">· जन समाधान</span></h1>
+      <p class="brand-sub">Public Grievance Urgency Classification System — AI-assisted triage so serious issues reach officers faster</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="ai-badge">⚡ BiLSTM + Attention AI · Human-reviewed</span>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap">
+    <button class="active" data-tab="file">📝 File a Grievance</button>
+    <button data-tab="track">🔎 Track Status</button>
+    <button data-tab="how">⚙️ How It Works</button>
+    <button data-tab="depts">🏛️ Departments</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============================ FILE TAB ============================ -->
+  <section id="tab-file" class="tab-panel active">
+    <div class="hero">
+      <div>
+        <h2>Describe your problem. AI routes it to the right desk — at the right priority.</h2>
+        <p>As you type, our neural model reads your complaint, predicts the responsible department, and scores
+           its urgency so emergencies are never stuck behind routine requests.</p>
+        <div class="chips">
+          <span class="chip">🏛️ <b id="chip-depts">15</b> departments covered</span>
+          <span class="chip">📄 <b id="chip-total">—</b> grievances filed here</span>
+          <span class="chip">🚨 Critical complaints seen within <b>24 h</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="compose-area" class="grid-2">
+      <div class="card">
+        <h3><span class="step-num">1</span> Your complaint</h3>
+        <p class="sub">Describe what happened, since when, and who is affected. English works best; mention durations
+           (e.g. “for 3 months”) and affected persons (e.g. “elderly mother”) — they help the AI judge urgency.</p>
+
+        <label class="f-label" for="complaint-text">Complaint description</label>
+        <textarea id="complaint-text" maxlength="4000" placeholder="Example: My elderly mother's pension has been stopped for 8 months. I have complained repeatedly but there is no response. Medical bills are unpaid and the situation is urgent."></textarea>
+        <div class="char-hint"><span id="char-count">0</span> / 4000</div>
+        <div class="composer-tools">
+          <button class="tool-btn rec" id="mic-btn" type="button" title="Speak your complaint">🎙️ Speak instead of typing</button>
+          <button class="tool-btn" type="button" data-sample="0">Try sample: pension</button>
+          <button class="tool-btn" type="button" data-sample="1">Try sample: water safety</button>
+          <button class="tool-btn" type="button" data-sample="2">Try sample: suggestion</button>
+        </div>
+
+        <h3 style="margin-top:26px"><span class="step-num">2</span> Your details <span class="sub" style="display:inline;font-weight:500">(optional — anonymous filing allowed)</span></h3>
+        <div class="f-row">
+          <div><label class="f-label" for="f-name">Full name <span class="opt">(optional)</span></label>
+            <input type="text" id="f-name" placeholder="e.g. Rishi Kumar"></div>
+          <div><label class="f-label" for="f-contact">Mobile / e-mail <span class="opt">(optional)</span></label>
+            <input type="text" id="f-contact" placeholder="for status updates"></div>
+        </div>
+        <label class="f-label" for="f-location">Location <span class="opt">(optional)</span></label>
+        <input type="text" id="f-location" placeholder="e.g. Sector 12, Gurugram, Haryana">
+
+        <button class="btn-primary" id="submit-btn" disabled>Submit grievance for AI triage →</button>
+        <div class="note-banner">⚖️ <span><b>Responsible use:</b> the AI only <i>suggests</i> routing and priority.
+          Every complaint is queued for human officer review. False complaints are punishable under applicable law.</span></div>
+      </div>
+
+      <div class="card preview-panel" id="preview-card">
+        <h3>🔬 Live AI triage preview</h3>
+        <p class="sub">Updates as you type — see how the model reads your complaint before you submit.</p>
+        <div id="preview-body">
+          <div class="preview-empty">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#5b6b7b" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <div>Start typing (≥ 4 words) to see the predicted<br>department and urgency in real time.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- result view (hidden until submit) -->
+    <div id="result-area" style="display:none"></div>
+  </section>
+
+  <!-- ============================ TRACK TAB ============================ -->
+  <section id="tab-track" class="tab-panel">
+    <div class="track-box">
+      <div class="card">
+        <h3>🔎 Track your grievance</h3>
+        <p class="sub">Enter the reference ID you received when filing (format PG-YYYY-NNNNNN).</p>
+        <div class="track-form">
+          <input type="text" id="track-input" placeholder="PG-2026-123456" autocomplete="off">
+          <button class="btn-ghost" id="track-btn">Track</button>
+        </div>
+        <div id="track-result"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ HOW TAB ============================ -->
+  <section id="tab-how" class="tab-panel">
+    <div class="card">
+      <h3>⚙️ How your complaint is processed</h3>
+      <p class="sub">A transparent look at the AI pipeline behind this portal.</p>
+      <div class="pipeline-steps">
+        <div class="pipe-card"><div class="n">STEP 1</div><h4>Text → tokens</h4><p>Your complaint is lower-cased and split into words; each word becomes a number the model knows (vocabulary of ~1,000+ terms learned from real grievances).</p></div>
+        <div class="pipe-card"><div class="n">STEP 2</div><h4>Bidirectional LSTM</h4><p>A recurrent neural network reads your complaint <b>forwards and backwards</b>, building context-aware features for every word.</p></div>
+        <div class="pipe-card"><div class="n">STEP 3</div><h4>Attention</h4><p>The model computes which words matter most (“stopped”, “no response”, “elderly”) and focuses on them — you see this as highlights in your result.</p></div>
+        <div class="pipe-card"><div class="n">STEP 4</div><h4>Two predictions</h4><p>Parallel classifier heads predict the <b>department</b> (15 classes) and the <b>urgency</b> (Low / Medium / High / Critical) simultaneously.</p></div>
+        <div class="pipe-card"><div class="n">STEP 5</div><h4>Urgency score 0–100</h4><p>A rule-based oracle adds an explainable score from severity keywords, durations, vulnerable groups, and prior escalations.</p></div>
+        <div class="pipe-card"><div class="n">STEP 6</div><h4>Action plan</h4><p>Your urgency level maps to routing, response deadlines, and an escalation path — plus concrete next steps for you.</p></div>
+      </div>
+      <div class="note-banner" style="margin-top:22px">🧪 <span><b>Limitations:</b> trained on ~4,800 English complaints across 15 departments.
+        Very short texts, other languages, or unseen topics reduce accuracy. The urgency score is advisory —
+        officers make the final call. For life-threatening emergencies always call <b>112</b> directly.</span></div>
+    </div>
+  </section>
+
+  <!-- ============================ DEPARTMENTS TAB ============================ -->
+  <section id="tab-depts" class="tab-panel">
+    <div class="card">
+      <h3>🏛️ Departments connected to this portal</h3>
+      <p class="sub">Complaints are routed to these Government of India organisations (CPGRAMS codes shown).</p>
+      <div class="dept-grid" id="dept-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h5>Jan Samadhan — Public Grievance Urgency Classification System</h5>
+      <p>Academic capstone prototype (AIML track). Built with a BiLSTM + Attention neural network trained on the
+         Government of India Grievance Report dataset. Not an official government service.</p>
+      <p>Responsible AI: predictions are advisory, all complaints receive human review, no personal data leaves this server.</p>
+    </div>
+    <div>
+      <h5>Quick links</h5>
+      <p><a href="/admin" style="color:#9fc3e4">Model Observatory (admin)</a></p>
+      <p><a href="https://www.pgportal.gov.in/" style="color:#9fc3e4">Official CPGRAMS portal</a></p>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/charts.js"></script>
+<script src="/js/portal.js"></script>
+</body>
+</html>

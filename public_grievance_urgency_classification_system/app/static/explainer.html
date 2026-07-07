@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grievance Model Explainer — every layer, live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/explainer.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='white'/><path d='M15 50 C 35 20, 45 20, 55 50 S 75 80, 88 50' stroke='%237a5af8' stroke-width='9' fill='none' stroke-linecap='round'/></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">Grievance Model Explainer<small>BiLSTM + Attention · every layer, live — from complaint to urgency &amp; department</small></div>
+  <select class="examples-dd" id="examples">
+    <option value="">Examples ▾</option>
+    <option>my elderly father pension stopped for 3 months no response urgent</option>
+    <option>bribe demanded by hospital staff to admit my critically ill child this is corruption and unsafe</option>
+    <option>no water supply for 12 days children falling sick medical emergency</option>
+    <option>suggestion to add more counters at the post office</option>
+    <option>atm did not dispense cash but my account was debited</option>
+    <option>school building unsafe roof leaking children at risk</option>
+  </select>
+  <input class="main-input" id="text-in" value="my elderly father pension stopped for 3 months no response urgent" spellcheck="false">
+  <button class="go-btn" id="classify-btn">Classify ▶</button>
+  <div class="top-meta" id="top-meta">loading model…<br><a href="/admin">Observatory</a><a href="/story">Project story</a><a href="/">Portal</a></div>
+</header>
+
+<div id="canvas-wrap">
+  <svg id="flow" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<div class="foot-note">
+  Every number on this canvas is a real activation from the production model serving the citizen portal —
+  nothing is mocked. Hover a token to trace its journey; hover ribbons and cells for exact values.
+  UI inspired by the <a href="https://poloclub.github.io/transformer-explainer/" target="_blank" rel="noopener">Transformer Explainer</a> (Polo Club, Georgia Tech).
+</div>
+
+<div class="guide-card" id="guide-card">
+  <button class="guide-close" id="guide-close">✕</button>
+  <h3><span class="kicker" id="g-kicker">GUIDED TOUR</span><span id="g-title">What is this?</span></h3>
+  <p id="g-text"></p>
+  <div class="hp-note" id="g-hp"></div>
+  <div class="guide-nav">
+    <button id="g-prev">‹</button>
+    <div class="bar"><i id="g-bar" style="width:5%"></i></div>
+    <span class="count" id="g-count">1 / 10</span>
+    <button id="g-next">›</button>
+  </div>
+</div>
+<button class="guide-reopen" id="guide-reopen">💡 Guided tour</button>
+
+<div id="tip"></div>
+
+<script src="/js/explainer.js"></script>
+</body>
+</html>

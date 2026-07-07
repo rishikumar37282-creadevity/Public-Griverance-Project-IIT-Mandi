@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pandas, openpyxl, tensorflow\")",
+      "Bash(python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 python -)",
+      "Bash(python -m venv .venv)",
+      "Bash(./.venv/Scripts/python.exe -m pip install --quiet --disable-pip-version-check pandas openpyxl)",
+      "Bash(./.venv/Scripts/python.exe -m pip install --quiet --disable-pip-version-check torch --index-url https://download.pytorch.org/whl/cpu)",
+      "Bash(./.venv/Scripts/python.exe -m pip install --quiet --disable-pip-version-check scikit-learn fastapi \"uvicorn[standard]\" matplotlib)",
+      "Bash(PYTHONIOENCODING=utf-8 ./.venv/Scripts/python.exe -)"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+data/complaints_db.json
+.DS_Store

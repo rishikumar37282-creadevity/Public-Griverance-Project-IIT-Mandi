@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Story — Public Grievance Urgency Classification System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/story.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230c1122'/><path d='M20 70 40 45 60 58 82 28' stroke='%236d8dff' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+</head>
+<body>
+
+<div class="deck-progress"><i id="dk-bar"></i></div>
+<div class="deck-brand"><b>Jan Samadhan</b> · the project story</div>
+<div class="deck-links"><a href="/explainer">Live explainer</a><a href="/admin">Observatory</a><a href="/">Portal</a></div>
+
+<!-- 1 · title -->
+<section class="slide" data-title="Title">
+  <div class="kicker" data-r>AIML CAPSTONE · PUBLIC SERVICE &amp; CIVIC OPERATIONS</div>
+  <h1 class="big" data-r style="transition-delay:.08s">Teaching a neural network<br>to hear <span class="grad">urgency</span> in a citizen's words</h1>
+  <p class="lead" data-r style="transition-delay:.16s">The complete journey of the <b>Public Grievance Urgency Classification System</b> —
+    why we built it, how we designed the architecture, how we trained, monitored and tuned it, and what we learned.
+    Every chart in this deck is drawn from the project's real training logs.</p>
+  <div class="cards c4" style="max-width:900px">
+    <div class="card" data-r style="transition-delay:.24s"><div class="bignum cyan">4,840</div><div class="m-sub">real grievances</div></div>
+    <div class="card" data-r style="transition-delay:.32s"><div class="bignum violet">435k</div><div class="m-sub">trained parameters</div></div>
+    <div class="card" data-r style="transition-delay:.40s"><div class="bignum red">1.000</div><div class="m-sub">Critical-recall on test</div></div>
+    <div class="card" data-r style="transition-delay:.48s"><div class="bignum green">2</div><div class="m-sub">full web platforms</div></div>
+  </div>
+</section>
+
+<!-- 2 · problem -->
+<section class="slide" data-title="The problem">
+  <div class="kicker" data-r>CHAPTER 1 · THE PROBLEM</div>
+  <h2 class="slide-h" data-r>Every complaint waits in the same line</h2>
+  <p class="lead" data-r style="transition-delay:.1s">Government grievance systems receive lakhs of complaints. Triage is manual, so
+    everything queues first-come-first-served. The cost of slowness is <b>asymmetric</b>: a late answer to a suggestion is harmless;
+    a late answer to a stopped pension or an unsafe school roof is not.</p>
+  <div class="queue-viz" data-r style="transition-delay:.2s">
+    <span class="q-item" style="animation-delay:.3s">“please improve the website”</span><span class="q-arrow">→</span>
+    <span class="q-item" style="animation-delay:.45s">“add more counters”</span><span class="q-arrow">→</span>
+    <span class="q-item crit" style="animation-delay:.6s">“elderly mother's pension stopped 8 months, medical bills unpaid”</span><span class="q-arrow">→</span>
+    <span class="q-item" style="animation-delay:.75s">“ration card query”</span><span class="q-arrow">→</span>
+    <span class="q-item" style="animation-delay:.9s">officer desk 🏛️</span>
+  </div>
+  <div class="takeaway" data-r style="transition-delay:.5s"><b>The goal:</b> read every complaint the moment it arrives, predict its
+    <b>department</b> and <b>urgency</b>, and let emergencies jump the queue — with a human officer always making the final call.</div>
+</section>
+
+<!-- 3 · users -->
+<section class="slide" data-title="Users">
+  <div class="kicker" data-r>CHAPTER 1 · WHO IT SERVES</div>
+  <h2 class="slide-h" data-r>Three stakeholders, three needs</h2>
+  <div class="cards c3" style="margin-top:18px">
+    <div class="card" data-r style="transition-delay:.1s"><div class="ico">🧑</div><h4>Citizens</h4>
+      <p>File once, reach the right desk, and know what happens next — reference ID, expected timelines, escalation path, and a plain-English explanation of why the AI decided what it decided.</p></div>
+    <div class="card" data-r style="transition-delay:.2s"><div class="ico">🏛️</div><h4>Grievance officers</h4>
+      <p>See emergencies first. A four-level priority queue where Critical complaints surface within 24 hours instead of drowning among suggestions.</p></div>
+    <div class="card" data-r style="transition-delay:.3s"><div class="ico">🔬</div><h4>ML admins</h4>
+      <p>Trust and improve the model: full observability of training, per-epoch logs, explainable attention, and one-click retraining with any hyperparameters.</p></div>
+  </div>
+  <div class="takeaway" data-r style="transition-delay:.45s"><b>Success metric decided on day one:</b> Critical-class recall — never plain accuracy.
+    Missing an emergency is the one error the system must not make.</div>
+</section>
+
+<!-- 4 · dataset -->
+<section class="slide" data-title="The dataset">
+  <div class="kicker" data-r>CHAPTER 2 · THE DATA</div>
+  <h2 class="slide-h" data-r>4,840 grievances, 15 departments — and one rare class</h2>
+  <p class="lead" data-r style="transition-delay:.08s">Derived from the <b>Government of India Grievance Report</b> (Kaggle), joined with the official
+    CPGRAMS category tree (19,853 nodes) for department and sub-category codes. The catch that shaped the whole project: <b>Critical is only 2.4% of the data.</b></p>
+  <div class="cards c2">
+    <div class="chart-card" data-r style="transition-delay:.18s"><h5>Urgency distribution — the imbalance</h5>
+      <div class="hbar"><span class="nm">Medium</span><span class="track"><span class="fill" style="--w:100%;background:var(--medium)"></span></span><span class="val">1,873</span></div>
+      <div class="hbar"><span class="nm">Low</span><span class="track"><span class="fill" style="--w:89%;background:var(--low)"></span></span><span class="val">1,673</span></div>
+      <div class="hbar"><span class="nm">High</span><span class="track"><span class="fill" style="--w:63%;background:var(--high)"></span></span><span class="val">1,177</span></div>
+      <div class="hbar"><span class="nm">Critical</span><span class="track"><span class="fill" style="--w:6.3%;background:var(--critical)"></span></span><span class="val">117 · 2.4%</span></div>
+    </div>
+    <div class="card" data-r style="transition-delay:.3s"><h4>Why this changes everything</h4>
+      <p>A model that never predicts Critical is still <b style="color:var(--text)">97.6% accurate</b> — and completely useless.
+      So accuracy was banned as the headline metric, the loss was class-weighted, and checkpoints were selected on Critical-recall.
+      Labels come from a transparent <b style="color:var(--text)">weak-supervision oracle</b>: severity keywords + pending durations + vulnerable-group mentions + escalation depth → a 0–100 score → Low / Medium / High / Critical.</p>
+      <div style="margin-top:10px"><span class="tag">text</span><span class="tag">category</span><span class="tag">department</span><span class="tag">category_code</span><span class="tag">org_code</span><span class="tag hot">urgency</span><span class="tag hot">urgency_score</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · why this architecture -->
+<section class="slide" data-title="Why this architecture">
+  <div class="kicker" data-r>CHAPTER 3 · DESIGN DECISION</div>
+  <h2 class="slide-h" data-r>Why a BiLSTM with attention?</h2>
+  <p class="lead" data-r style="transition-delay:.08s">We compared three families before writing a line of training code:</p>
+  <div class="cards c3">
+    <div class="card" data-r style="transition-delay:.15s"><h4>TF-IDF + Linear model</h4>
+      <p>Fast and simple, but bag-of-words: cannot tell <i>“pension not stopped”</i> from <i>“pension stopped”</i>, and offers no token-level explanation.</p>
+      <div style="margin-top:8px"><span class="tag">baseline only</span></div></div>
+    <div class="card accent" data-r style="transition-delay:.25s"><h4>BiLSTM + Attention ✓</h4>
+      <p>Reads word order in both directions, right-sized for 4.8k samples (~435k params), trains in seconds on CPU — and the attention weights give <b style="color:var(--text)">built-in explainability</b> we surface to citizens.</p>
+      <div style="margin-top:8px"><span class="tag hot">chosen</span><span class="tag">2 parallel heads</span></div></div>
+    <div class="card" data-r style="transition-delay:.35s"><h4>Pretrained transformer</h4>
+      <p>Strongest ceiling (MuRIL for Indian languages) but heavy for this dataset size and harder to train/serve in a student setting. Kept as the Tier-2 roadmap.</p>
+      <div style="margin-top:8px"><span class="tag">future work</span></div></div>
+  </div>
+  <div class="takeaway" data-r style="transition-delay:.5s"><b>One model, two answers:</b> a shared encoder with parallel category + urgency heads (multi-task learning) —
+    both tasks share the same understanding of the complaint, and each head's loss regularises the other.</div>
+</section>
+
+<!-- 6 · architecture -->
+<section class="slide" data-title="The architecture">
+  <div class="kicker" data-r>CHAPTER 3 · THE ARCHITECTURE</div>
+  <h2 class="slide-h" data-r>Six stages, ~435k parameters</h2>
+  <p class="lead" data-r style="transition-delay:.08s">Watch it assemble — the same pipeline you can explore live, layer by layer, on the
+    <a href="/explainer" style="color:var(--acc)">Model Explainer</a> page.</p>
+  <div class="arch-build" data-r style="transition-delay:.15s">
+    <div class="ab-block" style="animation-delay:.2s"><b>Tokens</b><span>≤ 40 ids</span></div><span class="ab-arrow">→</span>
+    <div class="ab-block" style="animation-delay:.45s"><b>Embedding</b><span>×128 dims · 52k params</span></div><span class="ab-arrow">→</span>
+    <div class="ab-block" style="animation-delay:.7s"><b>BiLSTM</b><span>128 ×2 dirs · 264k params</span></div><span class="ab-arrow">→</span>
+    <div class="ab-block" style="animation-delay:.95s"><b>Attention</b><span>attn_dim 64 · 16k params · α weights</span></div><span class="ab-arrow">→</span>
+    <div class="ab-block" style="animation-delay:1.2s"><b>Context</b><span>256 dims</span></div><span class="ab-arrow">→</span>
+    <div class="ab-split">
+      <div class="ab-block" style="animation-delay:1.45s;border-color:rgba(57,198,214,.6)"><b>Head A · Category</b><span>256→128→128→15 · 51k</span></div>
+      <div class="ab-block" style="animation-delay:1.6s;border-color:rgba(157,109,255,.6)"><b>Head B · Urgency</b><span>256→128→128→4 · 50k</span></div>
+    </div>
+  </div>
+  <div class="cards c3" style="margin-top:22px">
+    <div class="card" data-r style="transition-delay:.4s"><h4>Why bidirectional?</h4><p>“no response despite repeated complaints” — the urgency of “no response” only becomes clear from what follows it. Reading both ways gives every token full-sentence context.</p></div>
+    <div class="card" data-r style="transition-delay:.5s"><h4>Why attention?</h4><p>It compresses variable-length complaints into one vector <i>and</i> tells us which words drove the decision — the same α weights citizens see highlighted in their result.</p></div>
+    <div class="card" data-r style="transition-delay:.6s"><h4>Why two MLP heads?</h4><p>Department and urgency are different questions with the same evidence. Two 2-layer heads (BatchNorm+ReLU+dropout) specialise on top of one shared encoder.</p></div>
+  </div>
+</section>
+
+<!-- 7 · loss -->
+<section class="slide" data-title="The loss design">
+  <div class="kicker" data-r>CHAPTER 3 · THE CRUCIAL TRICK</div>
+  <h2 class="slide-h" data-r>A loss function that refuses to ignore emergencies</h2>
+  <p class="lead" data-r style="transition-delay:.08s">With Critical at 2.4%, a plain loss lets the optimiser buy accuracy by sacrificing the rare class.
+    We made that trade impossible:</p>
+  <div class="formula" data-r style="transition-delay:.18s">
+    L &nbsp;=&nbsp; <span class="fc">w_cat · CE(category)</span> &nbsp;+&nbsp; <span class="fu">w_urg · CE(urgency, class-weights)</span>
+    &nbsp;&nbsp;where&nbsp; <span class="fr">weight(Critical) ×= critical_boost</span>
+  </div>
+  <div class="cards c3" style="margin-top:20px">
+    <div class="card" data-r style="transition-delay:.3s"><h4>Inverse-frequency weights</h4><p>Each urgency class is weighted by 1/frequency — one Critical example counts roughly as much as forty Medium ones.</p></div>
+    <div class="card" data-r style="transition-delay:.4s"><h4>critical_boost ×3</h4><p>An extra multiplier on top, tuned in the Training Studio. Missing a Critical becomes the most expensive mistake the model can make.</p></div>
+    <div class="card" data-r style="transition-delay:.5s"><h4>Checkpoint rule</h4><p>Best epoch = highest (Critical-recall, macro-F1) — the tie-break stops a degenerate “everything is Critical” epoch from winning.</p></div>
+  </div>
+</section>
+
+<!-- 8 · training protocol -->
+<section class="slide" data-title="Training protocol">
+  <div class="kicker" data-r>CHAPTER 4 · TRAINING</div>
+  <h2 class="slide-h" data-r>The training protocol</h2>
+  <div class="cards c4" style="margin-top:16px">
+    <div class="card" data-r style="transition-delay:.1s"><div class="ico">✂️</div><h4>70 / 15 / 15 split</h4><p>Stratified on urgency so each split keeps the same 2.4% of Critical — essential for a rare class.</p></div>
+    <div class="card" data-r style="transition-delay:.2s"><div class="ico">⚙️</div><h4>AdamW + plateau LR</h4><p>lr 1e-3, weight decay 1e-5, gradient clipping at 5.0. ReduceLROnPlateau halves the LR when val Critical-recall stalls.</p></div>
+    <div class="card" data-r style="transition-delay:.3s"><div class="ico">🛑</div><h4>Early stopping</h4><p>Patience of 10 epochs on Critical-recall; the best checkpoint is restored, never the last one.</p></div>
+    <div class="card" data-r style="transition-delay:.4s"><div class="ico">📼</div><h4>Everything recorded</h4><p>Every epoch of every run → <b style="color:var(--text)">training_log.csv</b>: 68 columns — losses, all metrics, per-class P/R/F1, the 4×4 confusion matrix, and the full hyperparameter snapshot.</p></div>
+  </div>
+  <div class="takeaway" data-r style="transition-delay:.55s"><b>Reproducibility rule:</b> if it isn't in the CSV, it didn't happen. That log powers the
+    Experiments dashboard, the training replay — and every chart on the next two slides.</div>
+</section>
+
+<!-- 9 · watching it learn -->
+<section class="slide" data-title="Watching it learn">
+  <div class="kicker" data-r>CHAPTER 4 · MONITORING</div>
+  <h2 class="slide-h" data-r>Watching it learn — the real production run</h2>
+  <p class="lead" data-r style="transition-delay:.08s">Live curves from <b>baseline-v1</b>, the run serving the portal right now (loaded from its recorded history):</p>
+  <div class="cards c2">
+    <div class="chart-card" data-r style="transition-delay:.18s"><h5>Cost function — train vs validation loss</h5><div id="s-loss"><div class="chart-empty">loading…</div></div></div>
+    <div class="chart-card" data-r style="transition-delay:.3s"><h5>Quality — macro-F1 &amp; Critical-recall</h5><div id="s-qual"><div class="chart-empty">loading…</div></div></div>
+  </div>
+  <div class="takeaway" data-r style="transition-delay:.45s" id="s-learn-note"><b>How to read it:</b> both losses fall together (healthy generalisation);
+    Critical-recall hits 1.0 within a few epochs and the checkpoint rule keeps the epoch where macro-F1 was also strongest.</div>
+</section>
+
+<!-- 10 · tuning & ablation -->
+<section class="slide" data-title="Tuning & ablations">
+  <div class="kicker" data-r>CHAPTER 5 · TUNING</div>
+  <h2 class="slide-h" data-r>Twisting the knobs — what actually changed the results</h2>
+  <p class="lead" data-r style="transition-delay:.08s">Every experiment was launched from the Training Studio and logged. Three tell the story best:</p>
+  <div class="cards c3">
+    <div class="chart-card" data-r style="transition-delay:.15s"><h5>baseline-v1 · defaults, boost ×3</h5>
+      <div class="hbar"><span class="nm">Crit-recall</span><span class="track"><span class="fill" style="--w:100%;background:var(--red)"></span></span><span class="val">1.000</span></div>
+      <div class="hbar"><span class="nm">macro-F1</span><span class="track"><span class="fill" style="--w:88.6%;background:var(--amber)"></span></span><span class="val">0.886</span></div>
+      <p style="font-size:11.5px;color:var(--muted);margin:8px 0 0">The keeper — zero missed emergencies, strong overall quality.</p></div>
+    <div class="chart-card" data-r style="transition-delay:.28s"><h5>no-critical-boost · boost ×1, no weights</h5>
+      <div class="hbar"><span class="nm">Crit-recall</span><span class="track"><span class="fill" style="--w:94.1%;background:var(--red)"></span></span><span class="val">0.941</span></div>
+      <div class="hbar"><span class="nm">macro-F1</span><span class="track"><span class="fill" style="--w:90.8%;background:var(--amber)"></span></span><span class="val">0.908</span></div>
+      <p style="font-size:11.5px;color:var(--muted);margin:8px 0 0">Better F1 — but <b style="color:var(--red)">≈6% of emergencies missed</b>. Exactly the trade we refuse.</p></div>
+    <div class="chart-card" data-r style="transition-delay:.41s"><h5>small-64-highdrop · half size, dropout .5</h5>
+      <div class="hbar"><span class="nm">Crit-recall</span><span class="track"><span class="fill" style="--w:100%;background:var(--red)"></span></span><span class="val">1.000</span></div>
+      <div class="hbar"><span class="nm">macro-F1</span><span class="track"><span class="fill" style="--w:67.4%;background:var(--amber)"></span></span><span class="val">0.674</span></div>
+      <p style="font-size:11.5px;color:var(--muted);margin:8px 0 0">Too small + over-regularised → underfits the middle classes.</p></div>
+  </div>
+  <div class="takeaway" data-r style="transition-delay:.55s"><b>The lesson:</b> the class-weighted loss is worth ~2 points of macro-F1 and buys
+    100% emergency capture. Capacity below ~128 hidden units underfits; the notebook defaults were close to optimal.</div>
+</section>
+
+<!-- 11 · refinement -->
+<section class="slide" data-title="Refinement">
+  <div class="kicker" data-r>CHAPTER 5 · REFINEMENT</div>
+  <h2 class="slide-h" data-r>How the system was refined, iteration by iteration</h2>
+  <ol class="flow-list" style="margin-top:10px">
+    <li data-r style="transition-delay:.08s"><b>Found:</b> checkpointing on Critical-recall alone let an epoch that predicts <i>everything</i> Critical win (recall 1.0, F1 0.14). → <b>Fixed:</b> macro-F1 tie-break in checkpoint selection.</li>
+    <li data-r style="transition-delay:.18s"><b>Found:</b> plain accuracy looked great (97%+) while the model ignored Critical. → <b>Fixed:</b> headline metric switched to Critical-recall everywhere — dashboards, logs, early stopping.</li>
+    <li data-r style="transition-delay:.28s"><b>Found:</b> tuning without records is guessing. → <b>Fixed:</b> 68-column per-epoch CSV log with auto schema migration; the Experiments tab diffs any runs side-by-side.</li>
+    <li data-r style="transition-delay:.38s"><b>Found:</b> a black-box "Critical" label wouldn't be trusted by officers or citizens. → <b>Fixed:</b> attention highlights + a rule-based 0–100 score breakdown shown with every prediction.</li>
+    <li data-r style="transition-delay:.48s"><b>Found:</b> predictions alone don't help a user act. → <b>Fixed:</b> escalation engine mapping urgency → routing level, SLAs, escalation path and next steps.</li>
+  </ol>
+  <div class="footer-note" data-r style="transition-delay:.6s">Each iteration is visible in the logs — open the Observatory's Experiments tab and replay any run in “Magic of the Architecture · Act 4”.</div>
+</section>
+
+<!-- 12 · results -->
+<section class="slide" data-title="Results">
+  <div class="kicker" data-r>CHAPTER 6 · RESULTS</div>
+  <h2 class="slide-h" data-r>Held-out test set — 726 complaints the model never saw</h2>
+  <div class="cards c4" style="margin-top:18px">
+    <div class="card danger" data-r style="transition-delay:.1s"><div class="bignum red countup" data-to="1.000" data-dec="3">0</div><div class="m-sub">Critical-recall — every emergency caught</div></div>
+    <div class="card" data-r style="transition-delay:.2s"><div class="bignum cyan countup" data-to="0.886" data-dec="3">0</div><div class="m-sub">urgency macro-F1</div></div>
+    <div class="card" data-r style="transition-delay:.3s"><div class="bignum violet countup" data-to="87.3" data-dec="1">0</div><div class="m-sub">% urgency accuracy</div></div>
+    <div class="card" data-r style="transition-delay:.4s"><div class="bignum green countup" data-to="100" data-dec="0">0</div><div class="m-sub">% department routing accuracy</div></div>
+  </div>
+  <div class="cards c2" style="margin-top:18px">
+    <div class="chart-card" data-r style="transition-delay:.5s"><h5>Test confusion matrix (urgency)</h5><div id="s-cm"><div class="chart-empty">loading…</div></div></div>
+    <div class="card" data-r style="transition-delay:.6s"><h4>Reading the matrix</h4>
+      <p>The Critical row is clean — zero missed emergencies. Remaining errors are adjacent (Low↔Medium, Medium↔High), which only nudges queue position, never buries an emergency. Confidence calibration and per-class metrics live in the Observatory's Evaluation tab.</p></div>
+  </div>
+</section>
+
+<!-- 13 · product -->
+<section class="slide" data-title="From model to product">
+  <div class="kicker" data-r>CHAPTER 7 · THE PRODUCT</div>
+  <h2 class="slide-h" data-r>A model is not a product — so we built the product</h2>
+  <div class="cards c2" style="margin-top:16px">
+    <div class="card accent" data-r style="transition-delay:.12s"><div class="ico">🏛️</div><h4>Jan Samadhan — citizen portal</h4>
+      <p>Live AI triage preview while typing · voice input · urgency gauge with explainable score · attention-highlighted “why” ·
+      CPGRAMS sub-category suggestions from the official 19,853-node tree · action plan with SLAs and escalation path ·
+      reference-ID tracking · printable acknowledgement.</p></div>
+    <div class="card accent" data-r style="transition-delay:.24s"><div class="ico">🔭</div><h4>Model Observatory — admin platform</h4>
+      <p>Model card &amp; evaluation · Architecture Explorer · <b style="color:var(--text)">Magic of the Architecture</b> (guided animated tour + training replay) ·
+      Training Studio with all 24 hyperparameters live · Experiments diffing · dataset explorer · full CSV logs.</p></div>
+  </div>
+  <div class="cards c2" style="margin-top:16px">
+    <div class="card" data-r style="transition-delay:.36s"><div class="ico">🌊</div><h4>Live Model Explainer</h4>
+      <p>The entire network as one flowing canvas — every layer, live inputs, live activations, attention ribbons whose width is the weight. <a href="/explainer" style="color:var(--acc)">Open it →</a></p></div>
+    <div class="card" data-r style="transition-delay:.48s"><div class="ico">🎞️</div><h4>This deck</h4>
+      <p>The phased, animated documentation of the whole build — data → design → training → tuning → product, with real logged numbers throughout.</p></div>
+  </div>
+</section>
+
+<!-- 14 · limitations -->
+<section class="slide" data-title="Limitations">
+  <div class="kicker" data-r>CHAPTER 8 · HONESTY</div>
+  <h2 class="slide-h" data-r>Limitations &amp; responsible use</h2>
+  <div class="cards c3" style="margin-top:16px">
+    <div class="card" data-r style="transition-delay:.1s"><div class="ico">🌐</div><h4>English-only, 15 departments</h4><p>Hindi/regional or code-mixed complaints and unseen topics degrade accuracy; unknown words fall back to &lt;UNK&gt;. MuRIL is the Tier-2 answer.</p></div>
+    <div class="card" data-r style="transition-delay:.18s"><div class="ico">🏷️</div><h4>Weak-supervision labels</h4><p>Urgency labels come from a transparent rule oracle, not triage experts. Real deployment needs officer-verified labels and a feedback loop.</p></div>
+    <div class="card" data-r style="transition-delay:.26s"><div class="ico">👤</div><h4>Human in the loop</h4><p>Predictions order the queue; they never close, reject or auto-decide a complaint. Officers make every final call.</p></div>
+    <div class="card" data-r style="transition-delay:.34s"><div class="ico">🚨</div><h4>Not an emergency channel</h4><p>The UI repeatedly says it: for danger to life, call 112. An AI queue must never gate emergency services.</p></div>
+    <div class="card" data-r style="transition-delay:.42s"><div class="ico">🔒</div><h4>Privacy by design</h4><p>Anonymous filing allowed; contact details never returned by the public tracking endpoint; nothing leaves the local server.</p></div>
+    <div class="card" data-r style="transition-delay:.5s"><div class="ico">⚖️</div><h4>Deliberate bias — disclosed</h4><p>The loss prefers false Critical alarms over missed emergencies. That bias is a design choice, documented and tunable.</p></div>
+  </div>
+</section>
+
+<!-- 15 · learnings -->
+<section class="slide" data-title="Learnings">
+  <div class="kicker" data-r>CHAPTER 9 · WHAT WE LEARNED</div>
+  <h2 class="slide-h" data-r>The learnings that outlast the project</h2>
+  <ol class="flow-list" style="margin-top:12px">
+    <li data-r style="transition-delay:.08s"><b>Pick the metric before the model.</b> Choosing Critical-recall on day one shaped the loss, the checkpointing, the dashboards — everything.</li>
+    <li data-r style="transition-delay:.18s"><b>Class imbalance is a design problem, not a nuisance.</b> Weighted loss + boost + stratified splits + recall-based early stopping — each alone is insufficient.</li>
+    <li data-r style="transition-delay:.28s"><b>Explainability is a feature, not a paper section.</b> The attention layer earns citizen trust and doubles as a debugging tool.</li>
+    <li data-r style="transition-delay:.38s"><b>Log everything, always.</b> The 68-column epoch log turned “I think it's better” into “run A beats run B by 0.034 macro-F1 at equal recall”.</li>
+    <li data-r style="transition-delay:.48s"><b>The last mile is the product.</b> SLAs, escalation paths, reference IDs and tracking are what make a classifier useful to a citizen.</li>
+  </ol>
+  <div class="takeaway" data-r style="transition-delay:.6s"><b>Next:</b> multilingual Tier-2 model (MuRIL) · officer feedback as continual labels ·
+    duplicate detection · real CPGRAMS API integration · authenticated roles &amp; audit logs.</div>
+</section>
+
+<!-- 16 · thanks -->
+<section class="slide" data-title="Finale">
+  <div class="kicker" data-r>THE END</div>
+  <h1 class="big" data-r style="transition-delay:.08s">Serious issues,<br><span class="grad">handled faster.</span></h1>
+  <p class="lead" data-r style="transition-delay:.18s">Public Grievance Urgency Classification System — AIML capstone.<br>
+    BiLSTM + Attention · multi-task learning · 100% Critical-recall · two platforms · fully logged and explainable.</p>
+  <div data-r style="transition-delay:.3s">
+    <a href="/" style="color:var(--acc);margin-right:22px">Try the portal →</a>
+    <a href="/explainer" style="color:var(--cyan);margin-right:22px">See the model live →</a>
+    <a href="/admin" style="color:var(--acc2)">Open the Observatory →</a>
+  </div>
+  <div class="footer-note" data-r style="transition-delay:.42s">Navigate with ← → keys · every number in this deck comes from logs/training_log.csv and the held-out test set.</div>
+</section>
+
+<div class="deck-nav">
+  <button id="dk-prev">‹</button>
+  <div class="deck-dots" id="dk-dots"></div>
+  <span class="deck-count" id="dk-count">1 / 16</span>
+  <button id="dk-next">›</button>
+</div>
+<div class="key-hint">← → to navigate</div>
+
+<script src="/js/charts.js"></script>
+<script src="/js/story.js"></script>
+</body>
+</html>

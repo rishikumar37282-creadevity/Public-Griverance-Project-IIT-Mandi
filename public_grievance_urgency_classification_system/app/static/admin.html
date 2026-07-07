@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Observatory — Grievance AI Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d1220'/><circle cx='35' cy='50' r='12' fill='%236d8dff'/><circle cx='68' cy='35' r='9' fill='%239d6dff'/><circle cx='68' cy='65' r='9' fill='%2339c6d6'/><path d='M45 46 59 38 M45 54 59 62' stroke='%238b98b8' stroke-width='4'/></svg>">
+</head>
+<body>
+<div class="layout">
+
+<aside>
+  <div class="side-brand">
+    <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#1b2440"/><circle cx="32" cy="50" r="13" fill="#6d8dff"/><circle cx="70" cy="32" r="10" fill="#9d6dff"/><circle cx="70" cy="68" r="10" fill="#39c6d6"/><path d="M44 45 60 35 M44 55 60 65" stroke="#8b98b8" stroke-width="5" stroke-linecap="round"/></svg>
+    <div><b>Model Observatory</b><span>Grievance AI · Admin</span></div>
+  </div>
+  <nav class="side-nav">
+    <button class="active" data-view="overview">📊 Overview</button>
+    <button data-view="arch">🧠 Architecture Explorer</button>
+    <button data-view="magic">✨ Magic of the Architecture</button>
+    <button data-view="studio">🎛️ Training Studio</button>
+    <button data-view="experiments">🧪 Experiments</button>
+    <button data-view="evaluation">✅ Evaluation</button>
+    <button data-view="dataset">🗃️ Dataset</button>
+  </nav>
+  <div class="model-pill" id="side-model">Loading model<span class="loading-dots"></span></div>
+  <div class="side-foot">
+    BiLSTM + Attention · PyTorch<br>Inspired by the Transformer Explainer
+    <a href="/">← Citizen portal</a>
+    <a href="/explainer">🌊 Live Model Explainer</a>
+    <a href="/story">🎞️ Project Story deck</a>
+    <a href="/api/admin/log/download">⬇ Download training_log.csv</a>
+  </div>
+</aside>
+
+<main>
+
+  <!-- ======================= OVERVIEW ======================= -->
+  <section class="view active" id="view-overview">
+    <h2 class="view-title">Model Overview</h2>
+    <p class="view-sub">The production model currently serving the citizen portal: what it is, how big it is, and how well it performs on the held-out test set. Headline metric is <b>Critical-class recall</b> — the fraction of true emergencies the model catches.</p>
+    <div class="grid cols-4" id="ov-metrics"></div>
+    <div class="grid cols-2" style="margin-top:18px">
+      <div class="panel">
+        <h3>Model card</h3>
+        <p class="sub">Production artifact metadata.</p>
+        <table class="data" id="ov-card"></table>
+      </div>
+      <div class="panel">
+        <h3>Trainable parameters by module</h3>
+        <p class="sub">Where the model's capacity lives.</p>
+        <div id="ov-params"></div>
+      </div>
+      <div class="panel">
+        <h3>Production run — loss curves</h3>
+        <p class="sub">Train vs validation loss of the run that produced this model.</p>
+        <div id="ov-loss"></div>
+      </div>
+      <div class="panel">
+        <h3>Production run — quality curves</h3>
+        <p class="sub">Macro-F1 and the Critical-recall curve we optimise for.</p>
+        <div id="ov-quality"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= ARCHITECTURE ======================= -->
+  <section class="view" id="view-arch">
+    <h2 class="view-title">Architecture Explorer</h2>
+    <p class="view-sub">Type a complaint and watch it flow through every layer of the live production network — real numbers from a real forward pass, not a mock-up. Hover a token to follow it across stages.</p>
+
+    <div class="panel" style="margin-bottom:18px">
+      <label class="small" for="arch-input">Input complaint</label>
+      <div style="display:flex;gap:10px">
+        <input type="text" id="arch-input" value="my elderly father pension stopped for 3 months no response urgent" spellcheck="false">
+        <button class="btn" id="arch-run" style="white-space:nowrap">Run forward pass ▶</button>
+      </div>
+      <div class="example-btns">
+        <button class="ex-btn" data-ex="bribe demanded by hospital staff to admit my critically ill child this is corruption and unsafe">hospital bribe (Critical)</button>
+        <button class="ex-btn" data-ex="no water supply for 12 days children falling sick medical emergency">water emergency</button>
+        <button class="ex-btn" data-ex="suggestion to add more counters at the post office">post office suggestion (Low)</button>
+        <button class="ex-btn" data-ex="atm did not dispense cash but my account was debited">banking dispute</button>
+      </div>
+    </div>
+
+    <div class="arch-flow" id="arch-flow"></div>
+  </section>
+
+  <!-- ======================= MAGIC OF THE ARCHITECTURE ======================= -->
+  <section class="view" id="view-magic">
+    <h2 class="view-title">✨ The Magic Behind the Architecture</h2>
+    <p class="view-sub">A guided, animated tour of the whole system — how a raw complaint flows through every layer of the
+      neural network, what every hyperparameter really does, and how training turns random weights into a triage engine.
+      Every number you see comes from the <b>live production model</b>, in the spirit of the
+      <a href="https://poloclub.github.io/transformer-explainer/" target="_blank" rel="noopener">Transformer Explainer</a>.</p>
+
+    <!-- ---- Act 1: guided forward-pass show ---- -->
+    <div class="panel magic-panel" id="magic-show">
+      <h3>🎬 Act 1 — Watch a complaint travel through the network</h3>
+      <p class="sub">Pick a complaint and press play. The demo walks stage by stage with a narration of what the model is doing
+        and the real activations it produces.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <input type="text" id="magic-input" value="my elderly father pension stopped for 3 months no response urgent" spellcheck="false" style="flex:1;min-width:260px">
+        <button class="btn" id="magic-load">Load complaint</button>
+      </div>
+      <div class="example-btns">
+        <button class="ex-btn" data-mex="bribe demanded by hospital staff to admit my critically ill child this is corruption and unsafe">hospital bribe</button>
+        <button class="ex-btn" data-mex="no water supply for 12 days children falling sick medical emergency">water emergency</button>
+        <button class="ex-btn" data-mex="suggestion to add more counters at the post office">post office suggestion</button>
+      </div>
+
+      <div class="magic-stepper" id="magic-stepper"></div>
+
+      <div class="magic-stage-wrap">
+        <div class="magic-narration" id="magic-narration">
+          <div class="mn-kicker" id="mn-kicker">STAGE 0</div>
+          <h4 id="mn-title">Press "Load complaint" to begin</h4>
+          <p id="mn-text">The demo will fetch a real forward pass from the production model.</p>
+          <div id="mn-hp" class="mn-hp"></div>
+        </div>
+        <div class="magic-canvas" id="magic-canvas">
+          <div class="chart-empty">The stage will render here</div>
+        </div>
+      </div>
+
+      <div class="magic-controls">
+        <button class="btn ghost" id="magic-prev">◀ Previous</button>
+        <button class="btn" id="magic-play">⏵ Auto-play the magic</button>
+        <button class="btn ghost" id="magic-next">Next ▶</button>
+      </div>
+    </div>
+
+    <!-- ---- Act 2: hyperparameter anatomy ---- -->
+    <div class="panel magic-panel">
+      <h3>🎛️ Act 2 — The role of every hyperparameter</h3>
+      <p class="sub">Click a knob to see exactly <b>where</b> in the architecture it acts and what raising or lowering it does.
+        These are the same knobs you can turn in the Training Studio.</p>
+      <div class="anatomy-grid">
+        <div>
+          <div class="hp-chip-cloud" id="anatomy-chips"></div>
+          <div class="anatomy-card" id="anatomy-card">
+            <b>Select a hyperparameter above</b>
+            <p>Its location lights up in the architecture on the right, with the effect of turning it up or down.</p>
+          </div>
+        </div>
+        <div class="mini-arch" id="mini-arch"></div>
+      </div>
+    </div>
+
+    <!-- ---- Act 3: how training works ---- -->
+    <div class="panel magic-panel">
+      <h3>🔁 Act 3 — How the model learns (one training step)</h3>
+      <p class="sub">Every epoch repeats this loop over ~53 mini-batches of 64 complaints.</p>
+      <div class="train-loop" id="train-loop"></div>
+      <div class="loss-formula" id="loss-formula"></div>
+    </div>
+
+    <!-- ---- Act 4: training replay from the real log ---- -->
+    <div class="panel magic-panel">
+      <h3>📼 Act 4 — Training replay, epoch by epoch (real recorded history)</h3>
+      <p class="sub">Replays an actual run from <span class="mono">training_log.csv</span>: watch the cost function fall, the
+        confusion matrix sharpen along the diagonal, and the scheduler & early stopping act — with a commentary generated
+        from the recorded metrics.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <select id="replay-run" style="max-width:320px"></select>
+        <button class="btn" id="replay-play">⏵ Replay training</button>
+        <input type="range" id="replay-slider" min="1" max="1" value="1" style="flex:1;min-width:180px;accent-color:var(--accent)">
+        <span class="mono" id="replay-epoch-label">epoch —</span>
+      </div>
+      <div class="replay-narration" id="replay-narration">Select a run and press replay.</div>
+      <div class="grid cols-3" style="margin-top:14px">
+        <div class="rp-chart"><h5 class="rp-h">Cost function (loss)</h5><div id="rp-loss"><div class="chart-empty">—</div></div></div>
+        <div class="rp-chart"><h5 class="rp-h">Quality (F1 & Critical-recall)</h5><div id="rp-qual"><div class="chart-empty">—</div></div></div>
+        <div class="rp-chart"><h5 class="rp-h">Validation confusion matrix</h5><div id="rp-cm"><div class="chart-empty">—</div></div></div>
+      </div>
+    </div>
+
+    <!-- ---- Act 5: the whole project ---- -->
+    <div class="panel magic-panel">
+      <h3>🗺️ Act 5 — The whole project, end to end</h3>
+      <p class="sub">Where the model sits inside the full grievance-handling workflow.</p>
+      <div class="project-flow" id="project-flow"></div>
+    </div>
+  </section>
+
+  <!-- ======================= TRAINING STUDIO ======================= -->
+  <section class="view" id="view-studio">
+    <h2 class="view-title">Training Studio</h2>
+    <p class="view-sub">Every hyperparameter of the notebook's CONFIG cell, live. Change the knobs, launch a run, and watch loss curves, quality metrics and the confusion matrix update after every epoch. Each epoch is appended to <span class="mono">logs/training_log.csv</span>.</p>
+
+    <div class="grid studio-grid">
+      <div class="panel" style="align-self:start">
+        <h3>Control panel</h3>
+        <p class="sub">Hover any knob for what it does.</p>
+        <div id="hp-form"></div>
+        <label class="small" for="run-name" style="margin-top:6px">Run name</label>
+        <input type="text" id="run-name" placeholder="e.g. bigger-hidden-256">
+        <label style="display:flex;gap:8px;align-items:center;margin:12px 0;font-size:12.5px;color:var(--muted)">
+          <input type="checkbox" id="promote-check" class="run-check"> Promote to production when done (replaces the live model)
+        </label>
+        <div style="display:flex;gap:10px">
+          <button class="btn" id="train-start" style="flex:1">🚀 Start training</button>
+          <button class="btn danger" id="train-stop" disabled>■ Stop</button>
+        </div>
+        <div class="callout" id="studio-tips"><b>Tuning cheatsheet.</b> Overfitting (train ≫ val)? Raise dropout / weight decay. Underfitting? Raise hidden_dim or num_layers. Missing emergencies? Raise critical_boost. Loss spikes? Lower lr, keep grad_clip.</div>
+      </div>
+
+      <div style="min-width:0">
+        <div class="panel" style="margin-bottom:18px">
+          <div class="status-line">
+            <span class="pill" id="studio-pill"><i></i><span id="studio-status">idle — no run in progress</span></span>
+            <div class="progress-track"><div class="progress-fill" id="studio-progress" style="width:0%"></div></div>
+            <span class="mono" id="studio-epoch-count"></span>
+          </div>
+          <div id="studio-summary" style="margin-top:10px;font-size:12.5px;color:var(--muted)"></div>
+        </div>
+        <div class="grid cols-2">
+          <div class="panel"><h3>Loss — epoch vs cost function</h3><div id="st-loss"><div class="chart-empty">Launch a run to see live curves</div></div></div>
+          <div class="panel"><h3>Urgency accuracy</h3><div id="st-acc"><div class="chart-empty">—</div></div></div>
+          <div class="panel"><h3>Macro-F1 &amp; Critical-recall</h3><div id="st-f1"><div class="chart-empty">—</div></div></div>
+          <div class="panel"><h3>Learning-rate schedule</h3><div id="st-lr"><div class="chart-empty">—</div></div></div>
+          <div class="panel"><h3>Live validation confusion matrix</h3><p class="sub">Latest epoch · rows = true class. Watch the Critical row.</p><div id="st-cm"><div class="chart-empty">—</div></div></div>
+          <div class="panel"><h3>Epoch log</h3><p class="sub">Newest first · full detail lands in training_log.csv.</p>
+            <div style="max-height:330px;overflow:auto"><table class="data" id="st-table"></table></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= EXPERIMENTS ======================= -->
+  <section class="view" id="view-experiments">
+    <h2 class="view-title">Experiments</h2>
+    <p class="view-sub">Every training run ever logged, grouped from <span class="mono">training_log.csv</span>. Select up to three runs to overlay their validation curves and see exactly how a hyperparameter change moved the metrics.</p>
+    <div class="panel">
+      <h3>Run history</h3>
+      <p class="sub">☑ select runs to compare · hyperparameters that differ from the notebook defaults are <span class="tag diff">highlighted</span>.</p>
+      <div style="overflow-x:auto"><table class="data" id="runs-table"></table></div>
+    </div>
+    <div id="compare-area" style="display:none;margin-top:18px">
+      <div class="grid cols-3">
+        <div class="panel"><h3>Validation loss</h3><div id="cmp-loss"></div></div>
+        <div class="panel"><h3>Validation macro-F1</h3><div id="cmp-f1"></div></div>
+        <div class="panel"><h3>Validation Critical-recall</h3><div id="cmp-crit"></div></div>
+      </div>
+      <div class="panel" style="margin-top:18px">
+        <h3>Hyperparameter diff</h3>
+        <p class="sub">Cells highlighted where the selected runs disagree — this is the change that explains the curves above.</p>
+        <div style="overflow-x:auto"><table class="data" id="cmp-diff"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= EVALUATION ======================= -->
+  <section class="view" id="view-evaluation">
+    <h2 class="view-title">Evaluation — held-out test set</h2>
+    <p class="view-sub">Frozen best checkpoint evaluated on the 15% test split the model never saw during training. Off-diagonal entries in the Critical row are missed emergencies — the errors that matter most.</p>
+    <div class="grid cols-4" id="ev-metrics"></div>
+    <div class="grid cols-2" style="margin-top:18px">
+      <div class="panel"><h3>Confusion matrix (counts)</h3><div id="ev-cm"></div></div>
+      <div class="panel"><h3>Confusion matrix (row-normalised = recall)</h3><div id="ev-cmn"></div></div>
+      <div class="panel"><h3>Per-class precision / recall / F1</h3><div id="ev-perclass"></div></div>
+      <div class="panel"><h3>Confidence calibration</h3><p class="sub">Predicted probability of the true class — a healthy model is confident when right, hesitant when wrong.</p><div id="ev-calib"></div></div>
+      <div class="panel" style="grid-column:1/-1"><h3>Classification report</h3><table class="data" id="ev-report"></table></div>
+    </div>
+  </section>
+
+  <!-- ======================= DATASET ======================= -->
+  <section class="view" id="view-dataset">
+    <h2 class="view-title">Dataset</h2>
+    <p class="view-sub">The training corpus: Government of India Grievance Report derived complaints with weak-supervision urgency labels. Class imbalance below is why plain accuracy is the wrong metric and why the loss is class-weighted.</p>
+    <div class="grid cols-2">
+      <div class="panel"><h3>Urgency distribution <span class="tag">imbalanced — Critical is rare</span></h3><div id="ds-urg"></div></div>
+      <div class="panel"><h3>Complaint length (tokens)</h3><div id="ds-len"></div></div>
+      <div class="panel" style="grid-column:1/-1"><h3>Category / department distribution</h3><div id="ds-cat"></div></div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script src="/js/charts.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
