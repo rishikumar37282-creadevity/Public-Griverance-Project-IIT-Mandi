@@ -1,27 +1,43 @@
-# Jan Samadhan — Public Grievance Urgency Classification System
+<div align="center">
+
+# ⚖️ Jan Samadhan
+
+### Public Grievance Urgency Classification System
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://public-griverance-project-iit-mandi.onrender.com/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rishikumar37282-creadevity/Public-Griverance-Project-IIT-Mandi)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)]()
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)]()
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)]()
+[![AI](https://img.shields.io/badge/AI-BiLSTM%20Attention-FF6F00?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Status-Deployed-22c55e?style=for-the-badge)]()
 
 **Track:** AIML · **Domain:** Public Service & Civic Operations · **Difficulty:** Intermediate · **Duration:** 10 Days
+
+</div>
 
 A complete, production-ready AI system that reads citizen complaints in plain English and instantly predicts the responsible department, urgency level (Low/Medium/High/Critical) with an explainable 0–100 urgency score, and generates a concrete escalation and action plan — ensuring serious issues reach officers faster instead of waiting in a first-come-first-served queue.
 
 ---
 
-## Live Deployment
+## 🚀 Live Deployment
 
-> **https://public-griverance-project-iit-mandi.onrender.com**
+<div align="center">
 
-| Application | URL |
+| Application | Live URL |
 |---|---|
-| Citizen Portal (Jan Samadhan) | [https://public-griverance-project-iit-mandi.onrender.com/](https://public-griverance-project-iit-mandi.onrender.com/) |
-| Model Observatory (Admin) | [https://public-griverance-project-iit-mandi.onrender.com/admin](https://public-griverance-project-iit-mandi.onrender.com/admin) |
-| Live Model Explainer | [https://public-griverance-project-iit-mandi.onrender.com/explainer](https://public-griverance-project-iit-mandi.onrender.com/explainer) |
-| Project Story Deck | [https://public-griverance-project-iit-mandi.onrender.com/story](https://public-griverance-project-iit-mandi.onrender.com/story) |
+| 🏛️ **Citizen Portal (Jan Samadhan)** | [https://public-griverance-project-iit-mandi.onrender.com/](https://public-griverance-project-iit-mandi.onrender.com/) |
+| 📊 **Model Observatory (Admin)** | [https://public-griverance-project-iit-mandi.onrender.com/admin](https://public-griverance-project-iit-mandi.onrender.com/admin) |
+| 🔬 **Live Model Explainer** | [https://public-griverance-project-iit-mandi.onrender.com/explainer](https://public-griverance-project-iit-mandi.onrender.com/explainer) |
+| 📖 **Project Story Deck** | [https://public-griverance-project-iit-mandi.onrender.com/story](https://public-griverance-project-iit-mandi.onrender.com/story) |
 
-Deployed on **Render** (free tier). The service spins down after 15 minutes of inactivity — the first request may take 30-60 seconds to wake up.
+</div>
+
+> ⚡ Deployed on **Render** (free tier). The service spins down after 15 minutes of inactivity — the first request may take **30–60 seconds** to wake up.
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
 - [Phase 1: Problem Understanding & Stakeholders](#phase-1-problem-understanding--stakeholders)
 - [Phase 2: Data Preparation & Weak Supervision](#phase-2-data-preparation--weak-supervision)
