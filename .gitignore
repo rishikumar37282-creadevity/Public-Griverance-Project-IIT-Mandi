@@ -9,3 +9,4 @@ data/complaints_db.json
 .env
 *.xlsx
 *.ipynb
+.claude/
