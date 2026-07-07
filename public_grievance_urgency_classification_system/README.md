@@ -6,6 +6,21 @@ A complete, production-ready AI system that reads citizen complaints in plain En
 
 ---
 
+## Live Deployment
+
+> **https://public-griverance-project-iit-mandi.onrender.com**
+
+| Application | URL |
+|---|---|
+| Citizen Portal (Jan Samadhan) | [https://public-griverance-project-iit-mandi.onrender.com/](https://public-griverance-project-iit-mandi.onrender.com/) |
+| Model Observatory (Admin) | [https://public-griverance-project-iit-mandi.onrender.com/admin](https://public-griverance-project-iit-mandi.onrender.com/admin) |
+| Live Model Explainer | [https://public-griverance-project-iit-mandi.onrender.com/explainer](https://public-griverance-project-iit-mandi.onrender.com/explainer) |
+| Project Story Deck | [https://public-griverance-project-iit-mandi.onrender.com/story](https://public-griverance-project-iit-mandi.onrender.com/story) |
+
+Deployed on **Render** (free tier). The service spins down after 15 minutes of inactivity — the first request may take 30-60 seconds to wake up.
+
+---
+
 ## Table of Contents
 
 - [Phase 1: Problem Understanding & Stakeholders](#phase-1-problem-understanding--stakeholders)
@@ -882,7 +897,7 @@ python -m src.main train --run-name my-custom-run
 uvicorn app.server:app --port 8017 --reload
 ```
 
-### Access the Applications
+### Access the Applications (Local)
 
 | Application | URL |
 |---|---|
@@ -890,6 +905,10 @@ uvicorn app.server:app --port 8017 --reload
 | Model Observatory (Admin) | http://localhost:8017/admin |
 | Live Model Explainer | http://localhost:8017/explainer |
 | Project Story Deck | http://localhost:8017/story |
+
+### Access the Applications (Live — Render)
+
+[https://public-griverance-project-iit-mandi.onrender.com](https://public-griverance-project-iit-mandi.onrender.com/)
 
 ### CLI Commands
 
